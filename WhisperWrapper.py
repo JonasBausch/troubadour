@@ -1,11 +1,11 @@
-import whisper as whisper
+import whisper
 import datetime
 import subprocess
 import torch
 import wave
 import contextlib
+import numpy
 from sklearn.cluster import AgglomerativeClustering
-import numpy as np
 from pyannote.audio import Audio
 from pyannote.core import Segment
 from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
@@ -27,10 +27,10 @@ class WhisperWrapper:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
-        embeddings = np.zeros(shape=(len(segments), 192))
+        embeddings = numpy.zeros(shape=(len(segments), 192))
         for i, segment in enumerate(segments):
             embeddings[i] = self.segment_embedding(segment, path, duration)
-        embeddings = np.nan_to_num(embeddings)
+        embeddings = numpy.nan_to_num(embeddings)
         clustering = AgglomerativeClustering(num_speakers).fit(embeddings)
         labels = clustering.labels_
         for i in range(len(segments)):
